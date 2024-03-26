@@ -23,6 +23,7 @@ async def status(update: Update, context):
 async def network(update: Update, context):
     message = ""
     found_ipv4 = False  # Flag to track if IPv4 address found
+    
     for interface_name, addresses in psutil.net_if_addrs().items():
         for address in addresses:
             if str(address.family) == 'AddressFamily.AF_INET':
@@ -30,11 +31,13 @@ async def network(update: Update, context):
                 message += f"  IP Address: {address.address}\n"
                 message += f"  Netmask: {address.netmask}\n"
                 message += f"  Broadcast IP: {address.broadcast}\n"
-    found_ipv4 = True  # Set flag if IPv4 address found
+                found_ipv4 = True  # Set flag if IPv4 address found
+
     if found_ipv4:  # Check if flag is set before sending message
         await context.bot.send_message(chat_id=update.effective_chat.id, text=message)
     else:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="No IPv4 addresses found")
+
 
 async def temperature(update: Update, context):
     temp = os.popen("vcgencmd measure_temp").readline()
@@ -45,7 +48,7 @@ async def uptime(update: Update, context):
     await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Uptime: {str(uptime).split('.')[0]}")
 
 if __name__ == '__main__':
-    application = ApplicationBuilder().token('').build()
+    application = ApplicationBuilder().token('6322785482:AAGSqlfNTlUus2g9ZTrPeicb13BRh5jFGuY').build()
     
     start_handler = CommandHandler('start', start)
     status_handler = CommandHandler('status', status)
