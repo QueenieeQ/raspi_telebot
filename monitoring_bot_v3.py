@@ -21,16 +21,20 @@ async def status(update: Update, context):
     await context.bot.send_message(chat_id=update.effective_chat.id, text=message)
 
 async def network(update: Update, context):
-    if_addrs = psutil.net_if_addrs()
     message = ""
-    for interface_name, addresses in if_addrs.items():
+    found_ipv4 = False  # Flag to track if IPv4 address found
+    for interface_name, addresses in psutil.net_if_addrs().items():
         for address in addresses:
             if str(address.family) == 'AddressFamily.AF_INET':
                 message += f"Interface: {interface_name}\n"
                 message += f"  IP Address: {address.address}\n"
                 message += f"  Netmask: {address.netmask}\n"
                 message += f"  Broadcast IP: {address.broadcast}\n"
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=message)
+    found_ipv4 = True  # Set flag if IPv4 address found
+    if found_ipv4:  # Check if flag is set before sending message
+        await context.bot.send_message(chat_id=update.effective_chat.id, text=message)
+    else:
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="No IPv4 addresses found")
 
 async def temperature(update: Update, context):
     temp = os.popen("vcgencmd measure_temp").readline()
