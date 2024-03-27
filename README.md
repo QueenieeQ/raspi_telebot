@@ -22,7 +22,10 @@ While the virtual environment is active, the above command will output a filepat
 
 ##  Install package using pip
 While the virtual environment is active, install the required packages using pip:
+
     `python -m pip install requests python-telegram-bot`
+
 ## Run
 Make sure you have replaced `token` in `monitoring_bot_v3.py` with your actual Telegram bot API token
+
     `python  monitoring_bot_v3.py`
