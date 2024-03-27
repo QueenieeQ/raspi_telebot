@@ -10,7 +10,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler
 
 
 #Replace TOKEN get from botfather
-TOKEN = '6322785482:AAGSqlfNTlUus2g9ZTrPeicb13BRh5jFGuY'
+TOKEN = ''
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
@@ -80,15 +80,30 @@ async def docker_info(update: Update, context):
             for line in lines:
                 parts = line.split()
                 container_name = parts[-1]
-                created_at = ' '.join(parts[-4:-2])
-                uptime = datetime.datetime.now() - datetime.datetime.strptime(created_at, "%Y-%m-%d %H:%M:%S")
+                # Extract the creation time part and handle different date formats
+                creation_time_str = ' '.join(parts[-4:-2])
+                # Try different date formats to parse the creation time
+                for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S"):
+                    try:
+                        creation_time = datetime.datetime.strptime(creation_time_str, fmt)
+                        break
+                    except ValueError:
+                        continue
+                else:
+                    await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Skipped line due to invalid creation time format: {line}")
+                    continue  # Skip this line and move to the next one
+                
+                uptime = datetime.datetime.now() - creation_time
                 container_info.append((container_name, uptime))
 
             # Send the information through Telegram bot
-            message = "Docker Container Information:\n"
-            for name, uptime in container_info:
-                message += f"Name: {name}, Uptime: {uptime}\n"
-            await context.bot.send_message(chat_id=update.effective_chat.id, text=message)
+            if container_info:
+                message = "Docker Container Information:\n"
+                for name, uptime in container_info:
+                    message += f"Name: {name}, Uptime: {uptime}\n"
+                await context.bot.send_message(chat_id=update.effective_chat.id, text=message)
+            else:
+                await context.bot.send_message(chat_id=update.effective_chat.id, text="No Docker containers found.")
         else:
             await context.bot.send_message(chat_id=update.effective_chat.id, text="Failed to run 'docker ps' command")
     except Exception as e:
