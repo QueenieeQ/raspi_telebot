@@ -10,7 +10,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler
 
 
 #Replace TOKEN get from botfather
-TOKEN = '6322785482:AAGSqlfNTlUus2g9ZTrPeicb13BRh5jFGuY'
+TOKEN = ''
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
@@ -79,14 +79,14 @@ async def docker_info(update: Update, context):
             for line in lines:
                 parts = line.split()
                 container_name = parts[-1]  # Last part contains the container name
-                uptime = parts[-2]  # Second-to-last part contains the uptime
+                uptime = parts[-3]  # Second-to-last part contains the uptime
                 container_info.append((container_name, uptime))
 
             # Send the information through Telegram bot
             if container_info:
                 message = "Docker Container Information:\n"
                 for name, uptime in container_info:
-                    message += f"Name: {name}, Uptime: {uptime}\n"
+                    message += f"{name} uptime: {uptime} days ago\n"
                 await context.bot.send_message(chat_id=update.effective_chat.id, text=message)
             else:
                 await context.bot.send_message(chat_id=update.effective_chat.id, text="No Docker containers found.")
