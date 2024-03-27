@@ -15,9 +15,13 @@ async def start(update: Update, context):
 
 async def status(update: Update, context):
     cpu_percent = psutil.cpu_percent()
-    memory_percent = psutil.virtual_memory().percent
+    memory_used = round((psutil.virtual_memory().used)/ (1024 ** 2), 2)
+    swap_used = round(psutil.swap_memory().used/ (1024 ** 2), 2)
+    # memory_usage_mb = round(memory_percent )
     disk_percent = psutil.disk_usage('/').percent
-    message = f"CPU Usage: {cpu_percent}%\nMemory Usage: {memory_percent}%\nDisk Usage: {disk_percent}%"
+    disk_io_read = round((psutil.disk_io_counters(perdisk=False).read_bytes)/ (1024 ** 2), 2)
+    disk_io_write = round((psutil.disk_io_counters(perdisk=False).write_bytes)/ (1024 ** 2), 2)
+    message = f"CPU Usage: {cpu_percent}%\nMemory Usage: {memory_used} MB\nSwap Usage: {swap_used} MB\nDisk Usage: {disk_percent}%\nDisk Read: {disk_io_read}MB\nDisk Write: {disk_io_write}MB"
     await context.bot.send_message(chat_id=update.effective_chat.id, text=message)
 
 async def network(update: Update, context):
