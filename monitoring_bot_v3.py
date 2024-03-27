@@ -6,6 +6,9 @@ import socket
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler
 
+
+#Replace TOKEN get from botfather
+TOKEN = ''
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
@@ -62,7 +65,7 @@ async def uptime(update: Update, context):
     await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Uptime: {str(uptime).split('.')[0]}")
 
 if __name__ == '__main__':
-    application = ApplicationBuilder().token('').build()
+    application = ApplicationBuilder().token(TOKEN).build()
     
     start_handler = CommandHandler('start', start)
     status_handler = CommandHandler('status', status)
