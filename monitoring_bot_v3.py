@@ -17,7 +17,7 @@ logging.basicConfig(
 )
 
 async def start(update: Update, context):
-    await context.bot.send_message(chat_id=update.effective_chat.id, text='Hello! I am your Raspberry Pi monitor bot of Ninh Xuan Quy. How can I assist you?')
+    await context.bot.send_message(chat_id=update.effective_chat.id, text='Hello! I am your Raspberry Pi monitor bot of Ninh Xuan Quy @anotherQz. How can I assist you?')
 
 async def status(update: Update, context):
     cpu_percent = psutil.cpu_percent()
@@ -95,6 +95,11 @@ async def docker_info(update: Update, context):
     except Exception as e:
         await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Error: {e}")
 
+async def help(update: Update, context):
+    message = 'start - say hello\nstatus - check status of cpu, ram and disk usage\nnetwork - network information\ntemperature - check cpu temp\nuptime - uptime since last boot'
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=message)
+
+
 
 if __name__ == '__main__':
     application = ApplicationBuilder().token(TOKEN).build()
@@ -104,6 +109,7 @@ if __name__ == '__main__':
     network_handler = CommandHandler('network', network)
     temperature_handler = CommandHandler('temperature', temperature)
     uptime_handler = CommandHandler('uptime', uptime)
+    help_handler = CommandHandler('help',help)
     docker_handler = CommandHandler('docker',docker_info)
 
     application.add_handler(start_handler)
@@ -112,6 +118,7 @@ if __name__ == '__main__':
     application.add_handler(temperature_handler)
     application.add_handler(uptime_handler)
     application.add_handler(docker_handler)
+    application.add_handler(help_handler)
     
     application.run_polling()
 
