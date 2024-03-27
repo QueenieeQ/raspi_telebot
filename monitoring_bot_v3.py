@@ -1,5 +1,7 @@
 import os
+import re
 import psutil
+import subprocess
 import datetime
 import logging
 import socket
@@ -8,7 +10,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler
 
 
 #Replace TOKEN get from botfather
-TOKEN = ''
+TOKEN = '6322785482:AAGSqlfNTlUus2g9ZTrPeicb13BRh5jFGuY'
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
@@ -64,6 +66,35 @@ async def uptime(update: Update, context):
     uptime = datetime.datetime.now() - datetime.datetime.fromtimestamp(psutil.boot_time())
     await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Uptime: {str(uptime).split('.')[0]}")
 
+async def docker_info(update: Update, context):
+    try:
+        # Run 'docker ps' command and capture the output
+        completed_process = subprocess.run(["docker", "ps"], capture_output=True, text=True)
+        
+        # Check if the command was successful
+        if completed_process.returncode == 0:
+            output = completed_process.stdout
+            # Extract name and uptime from output
+            container_info = []
+            lines = output.strip().split('\n')[1:]  # Skip the header
+            for line in lines:
+                parts = line.split()
+                container_name = parts[-1]
+                created_at = ' '.join(parts[-4:-2])
+                uptime = datetime.datetime.now() - datetime.datetime.strptime(created_at, "%Y-%m-%d %H:%M:%S")
+                container_info.append((container_name, uptime))
+
+            # Send the information through Telegram bot
+            message = "Docker Container Information:\n"
+            for name, uptime in container_info:
+                message += f"Name: {name}, Uptime: {uptime}\n"
+            await context.bot.send_message(chat_id=update.effective_chat.id, text=message)
+        else:
+            await context.bot.send_message(chat_id=update.effective_chat.id, text="Failed to run 'docker ps' command")
+    except Exception as e:
+        await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Error: {e}")
+
+
 if __name__ == '__main__':
     application = ApplicationBuilder().token(TOKEN).build()
     
@@ -72,12 +103,14 @@ if __name__ == '__main__':
     network_handler = CommandHandler('network', network)
     temperature_handler = CommandHandler('temperature', temperature)
     uptime_handler = CommandHandler('uptime', uptime)
-    
+    docker_handler = CommandHandler('docker',docker_info)
+
     application.add_handler(start_handler)
     application.add_handler(status_handler)
     application.add_handler(network_handler)
     application.add_handler(temperature_handler)
     application.add_handler(uptime_handler)
+    application.add_handler(docker_handler)
     
     application.run_polling()
 

@@ -16,8 +16,8 @@ To confirm the virtual environment is activated, check the location of your Pyth
 
     `which python`
 
-While the virtual environment is active, the above command will output a filepath that includes the `.venv`directory, by ending with the following:
-
+Once activated, your terminal prompt will usually change to indicate the active virtual environment:
+    `(name_your_venv)user@machine:)`
     `.name_your_venv/bin/python`
 
 ##  Install package using pip
