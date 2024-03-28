@@ -28,7 +28,7 @@ share/python-wheels/
 *.egg
 MANIFEST
 token.txt
-
+.service/python-telegram-bot.service
 # PyInstaller / installers
 # Usually these files are written by a python script from a template
 # before PyInstaller

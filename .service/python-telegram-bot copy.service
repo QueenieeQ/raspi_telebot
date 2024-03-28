@@ -1,0 +1,16 @@
+[Unit]
+Description=Python Telegram Bot Service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=<path-to-venv>/<your-script-directory>
+Environment="PATH=/path_to/venv/bin:$PATH"
+ExecStart=<path-to-venv>/bin/python <your-script.py>
+Restart=always
+RestartSec=30
+KillMode=process
+
+
+[Install]
+WantedBy=multi-user.target
