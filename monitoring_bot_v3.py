@@ -58,8 +58,8 @@ async def network(update: Update, context):
         await context.bot.send_message(chat_id=update.effective_chat.id, text="No IPv4 addresses found")
 
 
-async def temperature(update: Update, context):
-    temp = os.popen("vcgencmd measure_temp").readline()
+async def temperature(update, context):
+    temp = os.popen("/usr/bin/vcgencmd measure_temp").readline()
     await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Temperature: {temp.replace('temp=', '')}")
 
 async def uptime(update: Update, context):
